@@ -1,125 +1,86 @@
 /*******************************************************/
-DML
-데이터 저장 INSERT
-데이터 수정 UPDATE
-데이터 삭제 DELETE
-데이터 병합 MERGE
+DDL
+
+테이블 생성
+
+CREATE TABLE 테이블명
+(
+    컬럼명 컬럼타입    기타속성/제약,
+    컬럼명 컬럼타입    기타속성/제약,
+    컬럼명 컬럼타입    기타속성/제약,
+    컬럼명 컬럼타입    기타속성/제약,
+    컬럼명 컬럼타입    기타속성/제약
+);
 
 
---데이터 조회 (SELECT)
-
-INSERT 저장
-
-INSERT INTO 테이블명 (컬럼명...)
-VALUES (데이터 값...)
-
-전체 컬럼에 데이터를 저장 + 순서 맞춰서 저장하는 경우 -> 컬럼명 작성 생략 가능
-INSERT INTO 테이블명
-VALUES (데이터 값...)
-;
-
-insert into new_table (no, name, birth)
-VALUES (1, '이름1', SYSDATE);
-
-select * from new_table;
-
-insert into new_table (name, birth, no)
-values ('이름2', SYSDATE, 2);
-
-insert into new_table (birth, name, no)
---values ('2024-12-12','이름3', 3);
-values ( TO_DATE('2024-12-12'),'이름3', 3);
-
-
-insert into new_table --컬럼명 생략
-VALUES (4, '이름4', SYSDATE);
+CREATE TABLE new_table  --테이블 스키마(Schema)
+(
+    no NUMBER(3),
+    name VARCHAR2(16),
+    birth DATE
+);
 
 select * from new_table;
 
-insert into new_table (no, name)
-VALUES (5, '이름5');
+desc new_table;
 
-insert into new_table
-VALUES (6, '이름6', null);
+CREATE TABLE new_table2
+(
+    no NUMBER(3),
+    name VARCHAR2(16),
+    birth DATE
+);
 
-INSERT ALL
-INTO new_table values(7, '이름7', null)
-INTO new_table values(8, '이름8', SYSDATE)
-INTO new_table values(9, '이름9', TO_DATE('2024-01-30'))
-select * from dual;
+--테이블 복사
+select * from dept2;
 
-select * from new_table2;
-
---다른 테이블의 다른 데이터를 조회해서 저장
-INSERT INTO new_table2
-SELECT 10, '이름10', SYSDATE FROM dual;
-
-INSERT INTO new_table2
-select no, name, birth from new_table;
-
-INSERT INTO new_table2
-select no, name, birth from new_table
-where no < 5;
-
-
-테이블 수정 UPDATE
-
-UPDATE 테이블명
-SET 컬럼명 = 값,
-    컬럼명 = 값
-WHERE 조건;
-
-select * from dept3;
---Seoul Branch Office -> Incheon Branch Office
-
-UPDATE dept3
-SET area = 'Incheon Branch Office'
---select * from dept3
-WHERE area = 'Seoul Branch Office';
-
-UPDATE dept3
-SET dname = 'Sales First Team'
---where dcode = 1008;
-;
-
-
-CREATE TABLE professor2
+CREATE TABLE dept3
 AS
-SELECT * FROM professor;
-
-select * from professor2;
-
---bonus 받는 교수들의 보너스를 +100 증가
-UPDATE professor2
-SET bonus = bonus + 100
---select * from professor2
-WHERE bonus is not null;
-
-commit;     확정
-rollback;   되돌리기(취소)
-
-select * from professor2;
-
---insert, update, delete    (DML)
-
-select * from new_table2;
-
-insert into new_table2
-values(99, '이름99', SYSDATE);
-
-
-DELETE 데이터 삭제 (rollback 가능 : 자동 commit 이 아닌경우)
-
-DELETE FROM 테이블명
-WHERE 조건;
+select * from dept2;    --dept2 테이블의 구조 + 데이터 복사 -> 테이블 생성
 
 select * from dept3;
 
-select *
---delete 
-from dept3
-where dcode = 1007;
+CREATE TABLE dept4
+AS
+select dcode, dname from dept3; --컬럼 일부 구조 + 데이터 복사 -> 테이블 생성(복사)
 
+select * from dept4;
+
+--컬럼 구조만 동일하게 테이블 복사 (데이터 제외)
+CREATE TABLE dept5
+AS
+select * from dept2
+where 1=2
+;    --데이터가 조회되지 않도록 거짓 조건 추가
+
+select * from dept5;
+
+--테이블 변경(수정)
+
+--컬럼추가
+select * from dept4;
+
+ALTER TABLE dept4
+ADD (loc VARCHAR2(32));
+
+ALTER TABLE dept4
+ADD (lv NUMBER(4) DEFAULT 5);
+
+--컬럼 삭제
+ALTER TABLE dept4
+DROP COLUMN lv;
+
+
+--테이블 삭제 (rollback 불가 / 자동 commit)
+DROP TABLE 테이블명;
+
+--테이블 내부 데이터 삭제
+TRUNCATE TABLE 테이블명;
+
+select * from dept4;
+
+truncate table dept4;
+drop table dept4;
 
 
 
